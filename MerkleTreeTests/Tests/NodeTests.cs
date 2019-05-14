@@ -6,74 +6,72 @@
 
 using System.Collections.Generic;
 using System.Text;
-
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 using Clifton.Blockchain;
 using Clifton.Core.ExtensionMethods;
 
 namespace MerkleTests
 {
-    [TestClass]
     public class NodeTests
     {
-        [TestMethod]
+        [Fact]
         public void HashesAreSameTest()
         {
             MerkleHash h1 = MerkleHash.Create("abc");
             MerkleHash h2 = MerkleHash.Create("abc");
-            Assert.IsTrue(h1 == h2);
+            Assert.Equal(h1, h2);
         }
 
-        [TestMethod]
+        [Fact]
         public void CreateNodeTest()
         {
             MerkleNode node = new MerkleNode();
-            Assert.IsNull(node.Parent);
-            Assert.IsNull(node.LeftNode);
-            Assert.IsNull(node.RightNode);
+            Assert.Null(node.Parent);
+            Assert.Null(node.LeftNode);
+            Assert.Null(node.RightNode);
         }
 
         /// <summary>
         /// Tests that after setting the left node, the parent hash verifies.
         /// </summary>
-        [TestMethod]
+        [Fact]
         public void LeftHashVerificationTest()
         {
             MerkleNode parentNode = new MerkleNode();
             MerkleNode leftNode = new MerkleNode();
             leftNode.ComputeHash(Encoding.UTF8.GetBytes("abc"));
             parentNode.SetLeftNode(leftNode);
-            Assert.IsTrue(parentNode.VerifyHash());
+            Assert.True(parentNode.VerifyHash());
         }
 
         /// <summary>
         /// Tests that after setting both child nodes (left and right), the parent hash verifies.
         /// </summary>
-        [TestMethod]
+        [Fact]
         public void LeftRightHashVerificationTest()
         {
             MerkleNode parentNode = CreateParentNode("abc", "def");
-            Assert.IsTrue(parentNode.VerifyHash());
+            Assert.True(parentNode.VerifyHash());
         }
 
-        [TestMethod]
+        [Fact]
         public void NodesEqualTest()
         {
             MerkleNode parentNode1 = CreateParentNode("abc", "def");
             MerkleNode parentNode2 = CreateParentNode("abc", "def");
-            Assert.IsTrue(parentNode1.Equals(parentNode2));
+            Assert.True(parentNode1.Equals(parentNode2));
         }
 
-        [TestMethod]
+        [Fact]
         public void NodesNotEqualTest()
         {
             MerkleNode parentNode1 = CreateParentNode("abc", "def");
             MerkleNode parentNode2 = CreateParentNode("def", "abc");
-            Assert.IsFalse(parentNode1.Equals(parentNode2));
+            Assert.False(parentNode1.Equals(parentNode2));
         }
 
-        [TestMethod]
+        [Fact]
         public void VerifyTwoLevelTree()
         {
             MerkleNode parentNode1 = CreateParentNode("abc", "def");
@@ -81,10 +79,10 @@ namespace MerkleTests
             MerkleNode rootNode = new MerkleNode();
             rootNode.SetLeftNode(parentNode1);
             rootNode.SetRightNode(parentNode2);
-            Assert.IsTrue(rootNode.VerifyHash());
+            Assert.True(rootNode.VerifyHash());
         }
 
-        [TestMethod]
+        [Fact]
         public void CreateBalancedTreeTest()
         {
             MerkleTree tree = new MerkleTree();
@@ -93,10 +91,10 @@ namespace MerkleTests
             tree.AppendLeaf(MerkleHash.Create("123"));
             tree.AppendLeaf(MerkleHash.Create("456"));
             tree.BuildTree();
-            Assert.IsNotNull(tree.RootNode);
+            Assert.NotNull(tree.RootNode);
         }
 
-        [TestMethod]
+        [Fact]
         public void CreateUnbalancedTreeTest()
         {
             MerkleTree tree = new MerkleTree();
@@ -104,13 +102,13 @@ namespace MerkleTests
             tree.AppendLeaf(MerkleHash.Create("def"));
             tree.AppendLeaf(MerkleHash.Create("123"));
             tree.BuildTree();
-            Assert.IsNotNull(tree.RootNode);
+            Assert.NotNull(tree.RootNode);
         }
 
         // A Merkle audit path for a leaf in a Merkle Hash Tree is the shortest
         // list of additional nodes in the Merkle Tree required to compute the
         // Merkle Tree Hash for that tree.
-        [TestMethod]
+        [Fact]
         public void AuditTest()
         {
             // Build a tree, and given the root node and a leaf hash, verify that the we can reconstruct the root hash.
@@ -123,19 +121,19 @@ namespace MerkleTests
             MerkleHash rootHash = tree.BuildTree();
 
             List<MerkleProofHash> auditTrail = tree.AuditProof(l1);
-            Assert.IsTrue(MerkleTree.VerifyAudit(rootHash, l1, auditTrail));
+            Assert.True(MerkleTree.VerifyAudit(rootHash, l1, auditTrail));
 
             auditTrail = tree.AuditProof(l2);
-            Assert.IsTrue(MerkleTree.VerifyAudit(rootHash, l2, auditTrail));
+            Assert.True(MerkleTree.VerifyAudit(rootHash, l2, auditTrail));
 
             auditTrail = tree.AuditProof(l3);
-            Assert.IsTrue(MerkleTree.VerifyAudit(rootHash, l3, auditTrail));
+            Assert.True(MerkleTree.VerifyAudit(rootHash, l3, auditTrail));
 
             auditTrail = tree.AuditProof(l4);
-            Assert.IsTrue(MerkleTree.VerifyAudit(rootHash, l4, auditTrail));
+            Assert.True(MerkleTree.VerifyAudit(rootHash, l4, auditTrail));
         }
 
-        [TestMethod]
+        [Fact]
         public void FixingOddNumberOfLeavesByAddingTreeTest()
         {
             MerkleTree tree = new MerkleTree();
@@ -146,10 +144,10 @@ namespace MerkleTests
             MerkleHash rootHash = tree.BuildTree();
             tree.AddTree(new MerkleTree());
             MerkleHash rootHashAfterFix = tree.BuildTree();
-            Assert.IsTrue(rootHash == rootHashAfterFix);
+            Assert.True(rootHash == rootHashAfterFix);
         }
 
-        [TestMethod]
+        [Fact]
         public void FixingOddNumberOfLeavesManuallyTest()
         {
             MerkleTree tree = new MerkleTree();
@@ -160,10 +158,10 @@ namespace MerkleTests
             MerkleHash rootHash = tree.BuildTree();
             tree.FixOddNumberLeaves();
             MerkleHash rootHashAfterFix = tree.BuildTree();
-            Assert.IsTrue(rootHash != rootHashAfterFix);
+            Assert.True(rootHash != rootHashAfterFix);
         }
 
-        [TestMethod]
+        [Fact]
         public void AddTreeTest()
         {
             MerkleTree tree = new MerkleTree();
@@ -182,11 +180,11 @@ namespace MerkleTests
             MerkleHash tree2RootHash = tree2.BuildTree();
             MerkleHash rootHashAfterAddTree = tree.AddTree(tree2);
 
-            Assert.IsTrue(rootHash != rootHashAfterAddTree);
+            Assert.True(rootHash != rootHashAfterAddTree);
         }
 
         // Merkle consistency proofs prove the append-only property of the tree.
-        [TestMethod]
+        [Fact]
         public void ConsistencyTest()
         {
             // Start with a tree with 2 leaves:
@@ -236,7 +234,7 @@ namespace MerkleTests
                         hash = proof[0].Hash;
                     }
 
-                    Assert.IsTrue(hash == oldRootHash, "Old root hash not found for index " + i + " m = " + (n+2).ToString());
+                    Assert.True(hash == oldRootHash, "Old root hash not found for index " + i + " m = " + (n+2).ToString());
                     
                 });
 
