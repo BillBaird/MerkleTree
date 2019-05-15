@@ -1,4 +1,6 @@
-namespace EventTree
+using MerkleAppendTree;
+
+namespace MerkleAppendTree
 {
     public class EventMerkleNode : MerkleNode
     {

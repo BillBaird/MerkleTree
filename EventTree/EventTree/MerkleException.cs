@@ -6,7 +6,7 @@
 
 using System;
 
-namespace EventTree
+namespace MerkleAppendTree
 {
     public class MerkleException : ApplicationException
     {

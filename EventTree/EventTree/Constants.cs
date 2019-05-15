@@ -4,7 +4,7 @@
 * http://www.codeproject.com/info/cpol10.aspx
 */
 
-namespace EventTree
+namespace MerkleAppendTree
 {
     public static class Constants
     {

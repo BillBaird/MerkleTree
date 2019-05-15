@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace EventTree
+namespace MerkleAppendTree
 {
     public class MerkleTree
     {
@@ -30,29 +30,28 @@ namespace EventTree
         {
         }
 
-        public MerkleNode AppendLeafNode(MerkleNode node)
+        public virtual MerkleNode AppendLeafNode(MerkleNode node)
         {
             if (CurrentLeaf == null) // Meaning we have an even number of nodes (or zero)
             {
                 // There were an even number of Leaves, including zero
                 if (CurrentParent == null)
                 {
-                    EventMerkleTree.OutputWriter($"New tree, first append - left leaf");
                     // This is the first node
                     CurrentParent = CreateNode(node, null);
                     CurrentLeaf = node;
                 }
                 else
                 {
-                    EventMerkleTree.OutputWriter($"Append left leaf");
-                    CurrentParent = ((EventMerkleNode)CurrentParent).AppendMerkleNode(node);
+                    // Append the leaf on the left, creating a new parent for it
+                    CurrentParent = CurrentParent.AppendMerkleNode(node);
                     CurrentLeaf = node;
                 }    
             }
             else
             {
-                EventMerkleTree.OutputWriter($"Append right leaf");
-                CurrentParent = ((EventMerkleNode)CurrentParent).AppendMerkleNode(node);
+                // Append the leaf on the right, creating a new parent for it
+                CurrentParent = CurrentParent.AppendMerkleNode(node);
                 CurrentLeaf = null;
             }
 

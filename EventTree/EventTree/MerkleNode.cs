@@ -8,7 +8,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace EventTree
+namespace MerkleAppendTree
 {
     public class MerkleNode : IEnumerable<MerkleNode>
     {
@@ -172,6 +172,27 @@ namespace EventTree
                 LeftNode.Hash : //MerkleHash.Create(LeftNode.Hash.Value.Concat(LeftNode.Hash.Value).ToArray()) : 
                 MerkleHash.Create(LeftNode.Hash.Value.Concat(RightNode.Hash.Value).ToArray());
             Parent?.ComputeHash();      // Recurse, because out hash has changed.
+        }
+        
+        public virtual MerkleNode AppendMerkleNode(MerkleNode node)
+        {
+            if (RightNode == null)
+            {
+                SetRightNode(node);
+                return this;
+            }
+            if (Parent == null)
+            {
+                var newParent = new MerkleNode(node, null);
+                new MerkleNode(this, newParent);
+                return newParent;
+            }
+            else // Parent exists
+            {
+                var newParent = new MerkleNode(node, null);
+                Parent.AppendMerkleNode(newParent);
+                return newParent;
+            }
         }
     }
 }

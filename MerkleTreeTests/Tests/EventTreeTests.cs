@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Linq.Expressions;
-using EventTree;
+using MerkleAppendTree;
 using TestingUtil;
 using Xunit;
 using Xunit.Abstractions;

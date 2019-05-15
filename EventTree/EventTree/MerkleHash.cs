@@ -9,7 +9,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace EventTree
+namespace MerkleAppendTree
 {
     public class MerkleHash
     {
