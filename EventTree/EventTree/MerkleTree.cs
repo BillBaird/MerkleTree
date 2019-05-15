@@ -15,9 +15,19 @@ namespace MerkleAppendTree
         public MerkleNode CurrentParent { get; protected set; }
         public MerkleNode CurrentLeaf { get; protected set; }
 
-        public MerkleNode RootNode 
-            => CurrentParent?.Root;
-
+        private MerkleNode rootNode = null;
+        public MerkleNode RootNode
+        {
+            get
+            {
+                if (rootNode == null)
+                    rootNode = CurrentParent?.Root;
+                if (rootNode?.Root != null)
+                    rootNode = rootNode.Root;    // Recurse up to the root if needed
+                return rootNode;
+            }
+        }
+        
         public static void Contract(Func<bool> action, string msg)
         {
             if (!action())
@@ -192,7 +202,7 @@ namespace MerkleAppendTree
 
             return hashNodes;
         }
-/*
+
         /// <summary>
         /// Completes the consistency proof with an audit proof using the last node in the consistency proof.
         /// </summary>
@@ -206,7 +216,7 @@ namespace MerkleAppendTree
 
             return auditTrail;
         }
-*/
+
         /// <summary>
         /// Verify that if we walk up the tree from a particular leaf, we encounter the expected root hash.
         /// </summary>
@@ -309,9 +319,6 @@ namespace MerkleAppendTree
 
         protected MerkleNode FindLeaf(MerkleHash leafHash)
         {
-            // TODO: We can improve the search for the leaf hash by maintaining a sorted list of leaf hashes.
-            // We use First because a tree with an odd number of leaves will duplicate the last leaf
-            // and will therefore have the same hash.
             return RootNode.Leaves().FirstOrDefault(l => l.Hash == leafHash);
         }
 

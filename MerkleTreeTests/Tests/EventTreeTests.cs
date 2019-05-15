@@ -60,6 +60,24 @@ namespace EventTreeTests
             Output.WriteLine("");
         }
 
+        [Fact]
+        public void RootNodeTest()
+        {
+            var tree = new MerkleTree();
+            for (int i = 0; i <= 65; i++)
+            {
+                tree.AppendLeaf(new MerkleNode(MerkleHash.Create(i.ToString())));
+                Assert.Equal(tree.CurrentParent.Root.Hash, tree.RootNode.Hash);
+            }
+
+            tree = new MerkleTree();
+            for (int i = 0; i <= 65; i++)
+            {
+                tree.AppendLeaf(new MerkleNode(MerkleHash.Create(i.ToString())));
+            }
+            Assert.Equal(tree.CurrentParent.Root.Hash, tree.RootNode.Hash);
+        }
+        
         // A Merkle audit path for a leaf in a Merkle Hash Tree is the shortest
         // list of additional nodes in the Merkle Tree required to compute the
         // Merkle Tree Hash for that tree.
