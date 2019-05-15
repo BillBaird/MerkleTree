@@ -36,7 +36,7 @@ namespace MerkleTests.Tests
             for (int i = 0; i < leafCount; i++)
             {
                 var newLeafNode = EventMerkleNode.Create(i.ToString()).SetText(i.ToString("X"));
-                appendTree.AppendLeafNode(newLeafNode);
+                appendTree.AppendLeaf(newLeafNode);
             }
             
             Assert.Equal(cliftonTree.RootNode.Hash.ToString(), appendTree.RootNode.Hash.ToString());
@@ -70,7 +70,7 @@ namespace MerkleTests.Tests
             for (int i = 0; i < leafCount; i++)
             {
                 var newLeafNode = new MerkleAppendTree.MerkleNode(MerkleAppendTree.MerkleHash.Create(i.ToString()));
-                appendTree.AppendLeafNode(newLeafNode);
+                appendTree.AppendLeaf(newLeafNode);
             }
             
             Assert.Equal(cliftonTree.RootNode.Hash.ToString(), appendTree.RootNode.Hash.ToString());

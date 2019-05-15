@@ -30,7 +30,7 @@ namespace MerkleAppendTree
         {
         }
 
-        public virtual MerkleNode AppendLeafNode(MerkleNode node)
+        public virtual MerkleNode AppendLeaf(MerkleNode node)
         {
             if (CurrentLeaf == null) // Meaning we have an even number of nodes (or zero)
             {
@@ -58,20 +58,13 @@ namespace MerkleAppendTree
             return node;
         }
 
-/*
+        public MerkleNode AppendLeaf(MerkleHash hash)
+            => AppendLeaf(CreateNode(hash));
+
         public void AppendLeaves(MerkleNode[] nodes)
         {
             foreach (var n in nodes)
                 AppendLeaf(n);
-        }
-
-        public MerkleNode AppendLeaf(MerkleHash hash)
-        {
-            var node = CreateNode(hash);
-            nodes.Add(node);
-            leaves.Add(node);
-
-            return node;
         }
 
         public List<MerkleNode> AppendLeaves(MerkleHash[] hashes)
@@ -82,7 +75,7 @@ namespace MerkleAppendTree
 
             return nodes;
         }
-
+/*
         public MerkleHash AddTree(MerkleTree tree)
         {
             Contract(() => leaves.Count > 0, "Cannot add to a tree with no leaves.");
@@ -108,27 +101,7 @@ namespace MerkleAppendTree
                 // l.Text = lastLeaf.Text;
             }
         }
-
-        /// <summary>
-        /// Builds the tree for leaves and returns the root node.
-        /// </summary>
-        public MerkleHash BuildTree()
-        {
-            // We do not call FixOddNumberLeaves because we want the ability to append 
-            // leaves and add additional trees without creating unecessary wasted space in the tree.
-            Contract(() => leaves.Count > 0, "Cannot build a tree with no leaves.");
-            BuildTree(leaves);
-
-            return RootNode.Hash;
-        }
-        
-        // Why would we need this?
-        //public void RegisterRoot(MerkleNode node)
-        //{
-        //    Contract(() => node.Parent == null, "Node is not a root node.");
-        //    rootNode = node;
-        //}
-
+*/
         /// <summary>
         /// Returns the audit proof hashes to reconstruct the root hash.
         /// </summary>
@@ -149,7 +122,7 @@ namespace MerkleAppendTree
 
             return auditTrail;
         }
-
+/*
         /// <summary>
         /// Verifies ordering and consistency of the first n leaves, such that we reach the expected subroot.
         /// This verifies that the prior data has not been changed and that leaf order has been preserved.
@@ -233,13 +206,12 @@ namespace MerkleAppendTree
 
             return auditTrail;
         }
-
+*/
         /// <summary>
         /// Verify that if we walk up the tree from a particular leaf, we encounter the expected root hash.
         /// </summary>
         public static bool VerifyAudit(MerkleHash rootHash, MerkleHash leafHash, List<MerkleProofHash> auditTrail)
         {
-            Contract(() => auditTrail.Count > 0, "Audit trail cannot be empty.");
             MerkleHash testHash = leafHash;
 
             // TODO: Inefficient - compute hashes directly.
@@ -252,7 +224,7 @@ namespace MerkleAppendTree
 
             return rootHash == testHash;
         }
-
+/*
         /// <summary>
         /// For demo / debugging purposes, we return the pairs of hashes used to verify the audit proof.
         /// </summary>
@@ -315,8 +287,7 @@ namespace MerkleAppendTree
         {
             return MerkleHash.Create(left.Value.Concat(right.Value).ToArray());
         }
-
-/*
+        
         protected void BuildAuditTrail(List<MerkleProofHash> auditTrail, MerkleNode parent, MerkleNode child)
         {
             if (parent != null)
@@ -341,39 +312,8 @@ namespace MerkleAppendTree
             // TODO: We can improve the search for the leaf hash by maintaining a sorted list of leaf hashes.
             // We use First because a tree with an odd number of leaves will duplicate the last leaf
             // and will therefore have the same hash.
-            return leaves.FirstOrDefault(l => l.Hash == leafHash);
+            return RootNode.Leaves().FirstOrDefault(l => l.Hash == leafHash);
         }
-*/
-
-/*
-        /// <summary>
-        /// Reduce the current list of n nodes to n/2 parents.
-        /// </summary>
-        /// <param name="nodes"></param>
-        protected void BuildTree(List<MerkleNode> nodes)
-        {
-            Contract(() => nodes.Count > 0, "node list not expected to be empty.");
-
-            if (nodes.Count == 1)
-            {
-                RootNode = nodes[0];
-            }
-            else
-            {
-                List<MerkleNode> parents = new List<MerkleNode>();
-
-                for (int i = 0; i < nodes.Count; i += 2)
-                {
-                    MerkleNode right = (i + 1 < nodes.Count) ? nodes[i + 1] : null;
-                    // Constructing the MerkleNode resolves the right node being null.
-                    MerkleNode parent = CreateNode(nodes[i], right);
-                    parents.Add(parent);
-                }
-
-                BuildTree(parents);
-            }
-        }
-*/
 
         // Override in derived class to extend the behavior.
         // Alternatively, we could implement a factory pattern.

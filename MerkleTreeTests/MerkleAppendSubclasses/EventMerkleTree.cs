@@ -29,7 +29,7 @@ namespace MerkleAppendTree
             return new EventMerkleNode(eLeft, eRight);
         }
         
-        public override MerkleNode AppendLeafNode(MerkleNode node)
+        public override MerkleNode AppendLeaf(MerkleNode node)
         {
             if (CurrentLeaf == null) // Meaning we have an even number of nodes (or zero)
             {
