@@ -6,7 +6,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MerkleTreeDemo", "MerkleTre
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MerkleTree", "MerkeTree\MerkleTree.csproj", "{358A7214-D45D-4743-99ED-02A81C4B8617}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventTree", "EventTree\EventTree\EventTree.csproj", "{96BA8DA6-04E7-4312-A28D-74BF6652CDD3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MerkleAppendTree", "EventTree\MerkleAppendTree\MerkleAppendTree.csproj", "{96BA8DA6-04E7-4312-A28D-74BF6652CDD3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MerkleTools", "MerkleTools", "{97ADC4C3-6D15-4A8F-81EA-A7AD5D5AB988}"
 EndProject

@@ -23,7 +23,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\EventTree\EventTree\EventTree.csproj" />
+    <ProjectReference Include="..\EventTree\MerkleAppendTree\MerkleAppendTree.csproj" />
     <ProjectReference Include="..\MerkeTree\MerkleTree.csproj">
       <Project>{358a7214-d45d-4743-99ed-02a81c4b8617}</Project>
       <Name>MerkleTree</Name>
