@@ -15,7 +15,13 @@ namespace EventTreeTests
         {
             Output = output;
             // Give the EventMerkleTree implementation a way of writing to the output log
-            EventMerkleTree.OutputWriter = output.WriteLine;
+            /************************************************************************************************
+             * FOR DEBUGGING, uncomment the line below to get debug output.
+             * This is necessary since it sets a static for writing to the output.  Alternatively, XUnit's
+             * collection mechanism, which let you set mutually exclusive execution could be used so that
+             * tests don't step on each other.
+             ************************************************************************************************/
+            //EventMerkleTree.OutputWriter = output.WriteLine;
         }
         
         public void DrawNode(MerkleNode node, int depth = 0)

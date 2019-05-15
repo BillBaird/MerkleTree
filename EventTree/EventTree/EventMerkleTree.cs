@@ -4,7 +4,11 @@ namespace EventTree
 {
     public class EventMerkleTree : MerkleTree
     {
-        public static Action<string> OutputWriter = null;
+        public static Action<string> OutputWriter = (s =>
+        {
+            if(false)
+                Console.WriteLine(s);
+        });
 
         public static void Output(string s)
         {
