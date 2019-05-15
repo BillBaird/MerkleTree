@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Clifton.Core.ExtensionMethods;
 using MerkleAppendTree;
 using TestingUtil;
 using Xunit;
@@ -128,6 +129,65 @@ namespace EventTreeTests
                 Output.WriteLine(h.ToString());
             }
             Assert.True(MerkleTree.VerifyAudit(rootHash, hash, auditTrail));
+        }
+
+        // Merkle consistency proofs prove the append-only property of the tree.
+        [Fact]
+        public void ConsistencyTest()
+        {
+            // Start with a tree with 2 leaves:
+            MerkleTree tree = new MerkleTree();
+            var startingNodes = tree.AppendLeaves(new MerkleHash[]
+                {
+                    MerkleHash.Create("1"),    // Results in 6B86B273FF34FCE19D6B804EFF5A3F5747ADA4EAA22F1D49C01E52DDB7875B4B, which is the first item
+                    MerkleHash.Create("2"),
+                });
+
+            // startingNodes.ForEachWithIndex((n, i) => n.Text = i.ToString());
+
+            MerkleHash firstRoot = tree.RootNode.Hash;
+
+            List<MerkleHash> oldRoots = new List<MerkleHash>() { firstRoot };
+
+            // Add a new leaf and verify that each time we add a leaf, we can get a consistency check
+            // for all the previous leaves.
+            for (int i = 2; i < 100; i++)
+            {
+                tree.AppendLeaf(MerkleHash.Create(i.ToString())); //.Text=i.ToString();
+
+                // After adding a leaf, verify that all the old root hashes exist.
+                oldRoots.ForEachWithIndex((oldRootHash, n) =>
+                {
+                    List<MerkleProofHash> proof = tree.ConsistencyProof(n+2);
+                    MerkleHash hash, lhash, rhash;
+
+                    if (proof.Count > 1)
+                    {
+                        lhash = proof[proof.Count - 2].Hash;
+                        int hidx = proof.Count - 1;
+                        hash = rhash = MerkleTree.ComputeHash(lhash, proof[hidx].Hash);
+                        hidx -= 2;
+
+                        while (hidx >= 0)
+                        {
+                            lhash = proof[hidx].Hash;
+                            hash = rhash = MerkleTree.ComputeHash(lhash, rhash);
+                            
+                            --hidx;
+                        }
+                    }
+                    else
+                    {
+                        hash = proof[0].Hash;
+                    }
+
+                    Assert.True(hash == oldRootHash, "Old root hash not found for index " + i + " m = " + (n+2).ToString());
+                    
+                });
+
+                // Then we add this root hash as the next old root hash to check.
+                oldRoots.Add(tree.RootNode.Hash);
+            }
         }
 
     }

@@ -122,7 +122,7 @@ namespace MerkleAppendTree
 
             return auditTrail;
         }
-/*
+
         /// <summary>
         /// Verifies ordering and consistency of the first n leaves, such that we reach the expected subroot.
         /// This verifies that the prior data has not been changed and that leaf order has been preserved.
@@ -137,7 +137,7 @@ namespace MerkleAppendTree
             int idx = (int)Math.Log(m, 2);
 
             // Get the leftmost node.
-            MerkleNode node = leaves[0];
+            MerkleNode node = RootNode.Leaves().FirstOrDefault(leaf => true);
 
             // Traverse up the tree until we get to the node specified by idx.
             while (idx > 0)
@@ -192,7 +192,7 @@ namespace MerkleAppendTree
 
             return hashNodes;
         }
-
+/*
         /// <summary>
         /// Completes the consistency proof with an audit proof using the last node in the consistency proof.
         /// </summary>
