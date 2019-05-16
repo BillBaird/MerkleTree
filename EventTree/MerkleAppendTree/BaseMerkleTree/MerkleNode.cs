@@ -15,9 +15,10 @@ namespace MerkleAppendTree
         public MerkleHash Hash { get; protected set; }
         public MerkleNode LeftNode { get; protected set; }
         public MerkleNode RightNode { get; protected set; }
-        public MerkleNode Parent { get; protected set; }
+        public MerkleNode Parent { get; internal set; }
 
-        public bool IsLeaf { get { return LeftNode == null && RightNode == null; } }
+        public virtual bool IsLeaf
+            => LeftNode == null && RightNode == null;
 
         public MerkleNode Root
             => Parent == null ? this : Parent.Root;
@@ -105,7 +106,7 @@ namespace MerkleAppendTree
             ComputeHash();
         }
 
-        public void SetRightNode(MerkleNode node)
+        public virtual void SetRightNode(MerkleNode node)
         {
             MerkleTree.Contract(() => node.Hash != null, "Node hash must be initialized.");
             RightNode = node;
@@ -157,7 +158,7 @@ namespace MerkleAppendTree
             return Hash.Equals(node.Hash);
         }
 
-        protected void ComputeHash()
+        protected virtual void ComputeHash()
         {
             // Repeat the left node if the right node doesn't exist.
             // This process breaks the case of doing a consistency check on 3 leaves when there are only 3 leaves in the tree.
@@ -171,7 +172,7 @@ namespace MerkleAppendTree
             Hash = RightNode == null ?
                 LeftNode.Hash : //MerkleHash.Create(LeftNode.Hash.Value.Concat(LeftNode.Hash.Value).ToArray()) : 
                 MerkleHash.Create(LeftNode.Hash.Value.Concat(RightNode.Hash.Value).ToArray());
-            Parent?.ComputeHash();      // Recurse, because out hash has changed.
+            Parent?.ComputeHash();      // Recurse, because our hash has changed.
         }
         
         public virtual MerkleNode AppendMerkleNode(MerkleNode node)

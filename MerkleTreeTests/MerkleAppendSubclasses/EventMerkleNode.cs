@@ -57,7 +57,7 @@ namespace MerkleAppendTree
             ((EventMerkleNode)Parent)?.MergeText();
         }
 
-        public MerkleNode AppendMerkleNode(MerkleNode node)
+        public override MerkleNode AppendMerkleNode(MerkleNode node)
         {
             if (RightNode == null)
             {
